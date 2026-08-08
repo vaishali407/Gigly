@@ -6,13 +6,11 @@ import { X, Send, Handshake, Flag, MessageSquare } from 'lucide-react';
 export const ChatDrawer: React.FC = () => {
   const { activeModal, closeModal, selectedConversationGigId, gigs, messages, sendMessage, acceptOffer, currentUser, reportItem } = useGigly();
 
-  if (activeModal !== 'chat') return null;
-
-  // Selected Gig context
-  const activeGig = gigs.find(g => g.id === selectedConversationGigId) || gigs[0];
   const [inputText, setInputText] = useState('');
+  const activeGig = gigs.find(g => g.id === selectedConversationGigId) || gigs[0];
   const [quickOfferPrice, setQuickOfferPrice] = useState(activeGig ? activeGig.price : 300);
 
+  if (activeModal !== 'chat') return null;
   if (!activeGig) return null;
 
   const otherUser = activeGig.posterId === currentUser.id ? (activeGig.assignedWorker || {

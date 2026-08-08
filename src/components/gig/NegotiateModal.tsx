@@ -6,14 +6,14 @@ import { X, Handshake, History, Send } from 'lucide-react';
 export const NegotiateModal: React.FC = () => {
   const { activeModal, closeModal, selectedGigId, gigs, offers, makeOffer } = useGigly();
 
-  if (activeModal !== 'negotiate' || !selectedGigId) return null;
-
   const gig = gigs.find(g => g.id === selectedGigId);
+  const [offerPrice, setOfferPrice] = useState<number>(gig ? gig.price : 300);
+  const [note, setNote] = useState('');
+
+  if (activeModal !== 'negotiate' || !selectedGigId) return null;
   if (!gig) return null;
 
   const gigOffers = offers.filter(o => o.gigId === gig.id);
-  const [offerPrice, setOfferPrice] = useState<number>(gig.price);
-  const [note, setNote] = useState('');
 
   const handleSendOffer = (e: React.FormEvent) => {
     e.preventDefault();
