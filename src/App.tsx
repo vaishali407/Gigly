@@ -2,6 +2,7 @@ import React from 'react';
 import { GiglyProvider, useGigly } from './context/GiglyContext';
 import { Navbar } from './components/navbar/Navbar';
 import { MobileBottomNav } from './components/navbar/MobileBottomNav';
+import { LoginPage } from './pages/LoginPage';
 import { HomePage } from './pages/HomePage';
 import { DiscoverPage } from './pages/DiscoverPage';
 import { GigDetailsPage } from './pages/GigDetailsPage';
@@ -23,9 +24,21 @@ import { ReportModal } from './components/safety/ReportModal';
 import { Toast } from './components/common/Toast';
 
 const MainAppContent: React.FC = () => {
-  const { currentPath, navigate } = useGigly();
+  const { currentPath, isAuthenticated, navigate } = useGigly();
 
-  // Helper to match routes
+  // Route Guard
+  if (!isAuthenticated || currentPath === '/login') {
+    return (
+      <div className="min-h-screen bg-[#090D0A] text-gray-100 flex flex-col font-sans selection:bg-[#8CE600] selection:text-black">
+        <main className="flex-1">
+          <LoginPage />
+        </main>
+        <Toast />
+      </div>
+    );
+  }
+
+  // Helper to match authenticated routes
   const renderPage = () => {
     if (currentPath.startsWith('/gigs/')) {
       const gigId = currentPath.replace('/gigs/', '');

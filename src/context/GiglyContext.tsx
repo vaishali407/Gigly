@@ -5,6 +5,7 @@ import { INITIAL_USERS, CATEGORIES, INITIAL_GIGS, INITIAL_REVIEWS, INITIAL_NOTIF
 interface GiglyContextType {
   currentUser: User;
   allUsers: User[];
+  isAuthenticated: boolean;
   userRoleMode: 'all' | 'poster' | 'worker';
   setUserRoleMode: (mode: 'all' | 'poster' | 'worker') => void;
   gigs: Gig[];
@@ -15,9 +16,13 @@ interface GiglyContextType {
   messages: Message[];
   filters: FilterState;
   
-  // Routing
+  // Routing & Auth
   currentPath: string;
   navigate: (path: string) => void;
+  loginWithPhoneOtp: (phone: string, code: string) => boolean;
+  loginWithGoogle: (email: string) => void;
+  signUpUser: (userData: { name: string; emailOrPhone: string; location: string; bio: string; goal: 'earn' | 'post' }) => void;
+  logout: () => void;
 
   // Modal & Selection State
   activeModal: 'none' | 'auth' | 'onboarding' | 'create_gig' | 'gig_details' | 'negotiate' | 'chat' | 'safety' | 'report' | 'profile';
@@ -62,10 +67,20 @@ const LOCAL_STORAGE_KEY_NOTIFS = 'gigly_app_notifs';
 const LOCAL_STORAGE_KEY_REVIEWS = 'gigly_app_reviews';
 const LOCAL_STORAGE_KEY_OFFERS = 'gigly_app_offers';
 const LOCAL_STORAGE_KEY_MSGS = 'gigly_app_msgs';
+const LOCAL_STORAGE_KEY_AUTH = 'gigly_auth_user';
 
 export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [allUsers, setAllUsers] = useState<User[]>(INITIAL_USERS);
-  const [currentUser, setCurrentUser] = useState<User>(INITIAL_USERS[0]);
+  
+  const [currentUser, setCurrentUser] = useState<User>(() => {
+    const saved = localStorage.getItem(LOCAL_STORAGE_KEY_AUTH);
+    return saved ? JSON.parse(saved) : INITIAL_USERS[0];
+  });
+
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    return Boolean(localStorage.getItem(LOCAL_STORAGE_KEY_AUTH));
+  });
+
   const [userRoleMode, setUserRoleMode] = useState<'all' | 'poster' | 'worker'>('all');
   
   const [categories] = useState<Category[]>(CATEGORIES);
@@ -129,16 +144,22 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   // Routing State
   const [currentPath, setCurrentPath] = useState<string>(() => {
     const hash = window.location.hash.replace('#', '');
+    if (!localStorage.getItem(LOCAL_STORAGE_KEY_AUTH)) return '/login';
     return hash || '/home';
   });
 
   useEffect(() => {
     const handleHashChange = () => {
       const hash = window.location.hash.replace('#', '');
+      if (!localStorage.getItem(LOCAL_STORAGE_KEY_AUTH) && hash !== '/login') {
+        setCurrentPath('/login');
+        window.location.hash = '#/login';
+        return;
+      }
       if (hash) {
         setCurrentPath(hash);
       } else {
-        setCurrentPath('/home');
+        setCurrentPath(localStorage.getItem(LOCAL_STORAGE_KEY_AUTH) ? '/home' : '/login');
       }
     };
 
@@ -147,9 +168,108 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, []);
 
   const navigate = (path: string) => {
+    if (!isAuthenticated && path !== '/login') {
+      window.location.hash = '#/login';
+      setCurrentPath('/login');
+      return;
+    }
     window.location.hash = `#${path}`;
     setCurrentPath(path);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // Auth Functions
+  const saveAuthUser = (user: User) => {
+    setCurrentUser(user);
+    setIsAuthenticated(true);
+    localStorage.setItem(LOCAL_STORAGE_KEY_AUTH, JSON.stringify(user));
+  };
+
+  const loginWithPhoneOtp = (phone: string, code: string): boolean => {
+    if (code !== '1234' && code.length !== 4) return false;
+    const cleanPhone = phone.replace(/\D/g, '');
+    const user: User = {
+      id: `user_${cleanPhone || Date.now()}`,
+      name: `Member (${phone.slice(-4)})`,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+      rating: 5.0,
+      reviewCount: 1,
+      completedGigs: 0,
+      postedGigs: 0,
+      skills: ['Errands', 'Delivery'],
+      bio: 'Verified Gigly member.',
+      location: 'Bengaluru',
+      memberSince: 'Today',
+      responseRate: '100%',
+      email: `${cleanPhone}@phone.gigly.app`,
+      isVerified: true,
+    };
+    saveAuthUser(user);
+    showToast(`📱 Phone + OTP Verified! Welcome to Gigly.`);
+    navigate('/home');
+    return true;
+  };
+
+  const loginWithGoogle = (email: string) => {
+    const nameFromEmail = email.split('@')[0].replace(/[._]/g, ' ');
+    const formattedName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
+    const user: User = {
+      id: `user_${Date.now()}`,
+      name: formattedName || 'Google User',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+      rating: 5.0,
+      reviewCount: 1,
+      completedGigs: 0,
+      postedGigs: 0,
+      skills: ['Tech Help', 'Tutoring', 'Errands'],
+      bio: 'Signed in via Google.',
+      location: 'Bengaluru',
+      memberSince: 'Today',
+      responseRate: '100%',
+      email: email || 'user@gmail.com',
+      isVerified: true,
+    };
+    saveAuthUser(user);
+    showToast(`🌐 Google Sign In Verified! Welcome ${user.name}.`);
+    navigate('/home');
+  };
+
+  const signUpUser = (userData: { name: string; emailOrPhone: string; location: string; bio: string; goal: 'earn' | 'post' }) => {
+    const newUser: User = {
+      id: `user_${Date.now()}`,
+      name: userData.name,
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
+      rating: 5.0,
+      reviewCount: 0,
+      completedGigs: 0,
+      postedGigs: 0,
+      skills: userData.goal === 'earn' ? ['Errands', 'Delivery', 'Tech Help'] : ['Task Poster'],
+      bio: userData.bio || 'New Gigly member ready to connect.',
+      location: userData.location || 'Bengaluru',
+      memberSince: 'Today',
+      responseRate: '100%',
+      email: userData.emailOrPhone.includes('@') ? userData.emailOrPhone : `${userData.emailOrPhone}@gigly.app`,
+      isVerified: true,
+    };
+
+    setAllUsers(prev => [newUser, ...prev]);
+    saveAuthUser(newUser);
+
+    if (userData.goal === 'earn') {
+      setUserRoleMode('worker');
+    } else {
+      setUserRoleMode('poster');
+    }
+
+    showToast(`🎉 Account created for ${newUser.name}!`);
+    navigate(userData.goal === 'post' ? '/post' : '/gigs');
+  };
+
+  const logout = () => {
+    localStorage.removeItem(LOCAL_STORAGE_KEY_AUTH);
+    setIsAuthenticated(false);
+    showToast(`Signed out successfully.`);
+    navigate('/login');
   };
 
   // Modal controls
@@ -477,6 +597,7 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       value={{
         currentUser,
         allUsers,
+        isAuthenticated,
         userRoleMode,
         setUserRoleMode,
         gigs,
@@ -488,6 +609,10 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         filters,
         currentPath,
         navigate,
+        loginWithPhoneOtp,
+        loginWithGoogle,
+        signUpUser,
+        logout,
         activeModal,
         selectedGigId,
         selectedUserId,

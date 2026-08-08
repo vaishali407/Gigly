@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useGigly } from '../../context/GiglyContext';
-import { PlusCircle, Bell, MessageSquare, User as UserIcon, Shield, Check, Sparkles, ChevronDown } from 'lucide-react';
+import { PlusCircle, Bell, MessageSquare, User as UserIcon, Shield, Check, LogOut, ChevronDown } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { 
@@ -10,7 +10,7 @@ export const Navbar: React.FC = () => {
     notifications, 
     currentPath,
     navigate,
-    openModal 
+    logout
   } = useGigly();
 
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -189,13 +189,13 @@ export const Navbar: React.FC = () => {
 
                   <button
                     onClick={() => {
-                      openModal('auth');
+                      logout();
                       setShowUserMenu(false);
                     }}
-                    className="w-full text-left px-3 py-2 text-xs font-semibold text-gray-300 hover:text-white hover:bg-gray-800/60 rounded-xl flex items-center gap-2"
+                    className="w-full text-left px-3 py-2 text-xs font-bold text-rose-400 hover:bg-rose-500/10 rounded-xl flex items-center gap-2 transition-colors"
                   >
-                    <Sparkles className="w-4 h-4 text-emerald-400" />
-                    Account Onboarding Intent
+                    <LogOut className="w-4 h-4 text-rose-400" />
+                    Sign Out / Switch Account
                   </button>
 
                   {/* Switch Demo User Section */}
