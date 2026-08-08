@@ -15,6 +15,10 @@ interface GiglyContextType {
   messages: Message[];
   filters: FilterState;
   
+  // Routing
+  currentPath: string;
+  navigate: (path: string) => void;
+
   // Modal & Selection State
   activeModal: 'none' | 'auth' | 'onboarding' | 'create_gig' | 'gig_details' | 'negotiate' | 'chat' | 'safety' | 'report' | 'profile';
   selectedGigId: string | null;
@@ -121,6 +125,32 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+
+  // Routing State
+  const [currentPath, setCurrentPath] = useState<string>(() => {
+    const hash = window.location.hash.replace('#', '');
+    return hash || '/home';
+  });
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash) {
+        setCurrentPath(hash);
+      } else {
+        setCurrentPath('/home');
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
+  const navigate = (path: string) => {
+    window.location.hash = `#${path}`;
+    setCurrentPath(path);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   // Modal controls
   const [activeModal, setActiveModal] = useState<GiglyContextType['activeModal']>('none');
@@ -456,6 +486,8 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         offers,
         messages,
         filters,
+        currentPath,
+        navigate,
         activeModal,
         selectedGigId,
         selectedUserId,
