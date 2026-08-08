@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useGigly } from '../context/GiglyContext';
-import { formatCurrency } from '../utils/helpers';
-import { PlusCircle, Sparkles, MapPin, Calendar, Clock, Handshake, Check, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Sparkles, MapPin, Calendar, Clock, Handshake, Check, ArrowRight } from 'lucide-react';
 
 export const PostGigPage: React.FC = () => {
   const { categories, postGig, navigate } = useGigly();

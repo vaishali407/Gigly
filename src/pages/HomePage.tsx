@@ -1,10 +1,10 @@
 import React from 'react';
 import { useGigly } from '../context/GiglyContext';
 import { formatCurrency, getCategoryEmoji } from '../utils/helpers';
-import { Search, PlusCircle, ArrowRight, MapPin, Calendar, Star, Sparkles, CheckCircle2, Play } from 'lucide-react';
+import { Search, PlusCircle, ArrowRight, Sparkles } from 'lucide-react';
 
 export const HomePage: React.FC = () => {
-  const { currentUser, gigs, navigate, updateGigStatus } = useGigly();
+  const { currentUser, gigs, navigate } = useGigly();
 
   // Recommended Gigs: maximum 3 cards
   const recommendedGigs = gigs.filter(g => g.posterId !== currentUser.id && g.status === 'open').slice(0, 3);

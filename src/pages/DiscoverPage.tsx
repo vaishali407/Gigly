@@ -4,7 +4,7 @@ import { formatCurrency, getCategoryEmoji } from '../utils/helpers';
 import { Search, ArrowUpDown, MapPin, Calendar, Star, ArrowRight, X } from 'lucide-react';
 
 export const DiscoverPage: React.FC = () => {
-  const { gigs, categories, filters, setFilter, resetFilters, navigate } = useGigly();
+  const { gigs, categories, filters, setFilter, navigate } = useGigly();
 
   const filteredGigs = useMemo(() => {
     return gigs.filter((gig) => {

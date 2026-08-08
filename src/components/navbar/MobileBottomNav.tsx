@@ -1,11 +1,9 @@
 import React from 'react';
 import { useGigly } from '../../context/GiglyContext';
-import { Home, Compass, Plus, MessageSquare, User, Bell } from 'lucide-react';
+import { Home, Compass, Plus, MessageSquare, User } from 'lucide-react';
 
 export const MobileBottomNav: React.FC = () => {
-  const { currentPath, navigate, notifications } = useGigly();
-
-  const unreadCount = notifications.filter(n => !n.isRead).length;
+  const { currentPath, navigate } = useGigly();
 
   const isActive = (path: string) => {
     if (path === '/home' && (currentPath === '/home' || currentPath === '/' || currentPath === '')) return true;

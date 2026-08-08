@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useGigly } from '../context/GiglyContext';
-import { formatCurrency } from '../utils/helpers';
-import { Send, Handshake, MessageSquare, Flag, CheckCircle2 } from 'lucide-react';
+import { Send, Handshake, Flag } from 'lucide-react';
 
 export const ChatPage: React.FC = () => {
   const { gigs, messages, sendMessage, acceptOffer, currentUser, reportItem, navigate } = useGigly();

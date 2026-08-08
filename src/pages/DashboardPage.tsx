@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useGigly } from '../context/GiglyContext';
 import { formatCurrency } from '../utils/helpers';
-import { Wallet, CheckCircle, Star, Clock, Layers, Play, Award, MessageSquare, ArrowRight } from 'lucide-react';
+import { Star, Layers } from 'lucide-react';
 
 export const DashboardPage: React.FC = () => {
   const { currentUser, gigs, offers, updateGigStatus, submitReview, navigate } = useGigly();

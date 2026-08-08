@@ -1,14 +1,12 @@
 import React, { useState } from 'react';
 import { useGigly } from '../../context/GiglyContext';
-import { PlusCircle, Bell, MessageSquare, User as UserIcon, Shield, ArrowRightLeft, Check, Sparkles, ChevronDown } from 'lucide-react';
+import { PlusCircle, Bell, MessageSquare, User as UserIcon, Shield, Check, Sparkles, ChevronDown } from 'lucide-react';
 
 export const Navbar: React.FC = () => {
   const { 
     currentUser, 
     allUsers, 
     switchUser, 
-    userRoleMode, 
-    setUserRoleMode, 
     notifications, 
     currentPath,
     navigate,

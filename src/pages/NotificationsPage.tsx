@@ -1,6 +1,6 @@
 import React from 'react';
 import { useGigly } from '../context/GiglyContext';
-import { Bell, Check, Trash2, ArrowRight } from 'lucide-react';
+import { Bell, Trash2 } from 'lucide-react';
 
 export const NotificationsPage: React.FC = () => {
   const { notifications, markNotificationRead, clearNotifications, navigate } = useGigly();

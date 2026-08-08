@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import { useGigly } from '../context/GiglyContext';
-import { formatCurrency, getCategoryEmoji, getStatusBadgeStyle } from '../utils/helpers';
-import { MapPin, Calendar, Clock, Star, Handshake, MessageSquare, ShieldCheck, Flag, ArrowLeft, Send, CheckCircle2 } from 'lucide-react';
+import { formatCurrency, getCategoryEmoji } from '../utils/helpers';
+import { MapPin, Calendar, Clock, Star, Handshake, MessageSquare, ArrowLeft } from 'lucide-react';
 
 interface GigDetailsPageProps {
   gigId: string;
 }
 
 export const GigDetailsPage: React.FC<GigDetailsPageProps> = ({ gigId }) => {
-  const { gigs, currentUser, navigate, makeOffer, acceptOffer, offers } = useGigly();
+  const { gigs, currentUser, navigate, makeOffer } = useGigly();
 
   const gig = gigs.find(g => g.id === gigId);
 
@@ -32,7 +32,6 @@ export const GigDetailsPage: React.FC<GigDetailsPageProps> = ({ gigId }) => {
   }
 
   const isPoster = gig.posterId === currentUser.id;
-  const gigOffers = offers.filter(o => o.gigId === gig.id);
 
   const handleOfferSubmit = (e: React.FormEvent) => {
     e.preventDefault();
