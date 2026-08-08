@@ -6,6 +6,7 @@ export const ProfilePage: React.FC = () => {
   const { currentUser, reviews } = useGigly();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [userName, setUserName] = useState(currentUser.name);
   const [bio, setBio] = useState(currentUser.bio);
   const [skills, setSkills] = useState(currentUser.skills.join(', '));
   const [userLocation, setUserLocation] = useState(currentUser.location);
@@ -13,6 +14,7 @@ export const ProfilePage: React.FC = () => {
   const userReviews = reviews.filter(r => r.revieweeId === currentUser.id);
 
   const handleSave = () => {
+    currentUser.name = userName;
     currentUser.bio = bio;
     currentUser.skills = skills.split(',').map(s => s.trim()).filter(Boolean);
     currentUser.location = userLocation;
@@ -33,7 +35,16 @@ export const ProfilePage: React.FC = () => {
             />
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-extrabold text-white font-display">{currentUser.name}</h1>
+                {isEditing ? (
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    className="bg-[#090D0A] text-white text-lg font-bold px-3 py-1 rounded-xl border border-gray-800 focus:border-[#8CE600] focus:outline-none"
+                  />
+                ) : (
+                  <h1 className="text-2xl font-extrabold text-white font-display">{currentUser.name}</h1>
+                )}
                 <CheckCircle2 className="w-5 h-5 text-[#8CE600]" />
               </div>
               <p className="text-xs text-amber-400 font-bold flex items-center gap-1 mt-1">

@@ -19,8 +19,8 @@ interface GiglyContextType {
   // Routing & Auth
   currentPath: string;
   navigate: (path: string) => void;
-  loginWithPhoneOtp: (phone: string, code: string) => boolean;
-  loginWithGoogle: (email: string) => void;
+  loginWithPhoneOtp: (phone: string, code: string, customName?: string) => boolean;
+  loginWithGoogle: (email: string, customName?: string) => void;
   signUpUser: (userData: { name: string; emailOrPhone: string; location: string; bio: string; goal: 'earn' | 'post' }) => void;
   logout: () => void;
 
@@ -185,12 +185,12 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     localStorage.setItem(LOCAL_STORAGE_KEY_AUTH, JSON.stringify(user));
   };
 
-  const loginWithPhoneOtp = (phone: string, code: string): boolean => {
+  const loginWithPhoneOtp = (phone: string, code: string, customName?: string): boolean => {
     if (code !== '1234' && code.length !== 4) return false;
     const cleanPhone = phone.replace(/\D/g, '');
     const user: User = {
       id: `user_${cleanPhone || Date.now()}`,
-      name: `Member (${phone.slice(-4)})`,
+      name: customName?.trim() || `Member (${phone.slice(-4)})`,
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
       rating: 5.0,
       reviewCount: 1,
@@ -205,17 +205,17 @@ export const GiglyProvider: React.FC<{ children: React.ReactNode }> = ({ childre
       isVerified: true,
     };
     saveAuthUser(user);
-    showToast(`📱 Phone + OTP Verified! Welcome to Gigly.`);
+    showToast(`📱 Phone + OTP Verified! Welcome ${user.name}.`);
     navigate('/home');
     return true;
   };
 
-  const loginWithGoogle = (email: string) => {
+  const loginWithGoogle = (email: string, customName?: string) => {
     const nameFromEmail = email.split('@')[0].replace(/[._]/g, ' ');
     const formattedName = nameFromEmail.charAt(0).toUpperCase() + nameFromEmail.slice(1);
     const user: User = {
       id: `user_${Date.now()}`,
-      name: formattedName || 'Google User',
+      name: customName?.trim() || formattedName || 'Google User',
       avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=300',
       rating: 5.0,
       reviewCount: 1,

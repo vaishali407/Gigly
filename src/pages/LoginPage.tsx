@@ -8,12 +8,14 @@ export const LoginPage: React.FC = () => {
   const [authTab, setAuthTab] = useState<'phone' | 'google' | 'signup'>('phone');
 
   // Phone OTP State
+  const [phoneName, setPhoneName] = useState('');
   const [phone, setPhone] = useState('');
   const [otpStep, setOtpStep] = useState(false);
   const [otpCode, setOtpCode] = useState('');
   const [otpError, setOtpError] = useState(false);
 
   // Google State
+  const [googleName, setGoogleName] = useState('');
   const [googleEmail, setGoogleEmail] = useState('');
 
   // Signup State
@@ -31,7 +33,7 @@ export const LoginPage: React.FC = () => {
 
   const handleVerifyOtp = (e: React.FormEvent) => {
     e.preventDefault();
-    const success = loginWithPhoneOtp(phone, otpCode);
+    const success = loginWithPhoneOtp(phone, otpCode, phoneName);
     if (!success) {
       setOtpError(true);
     }
@@ -40,7 +42,7 @@ export const LoginPage: React.FC = () => {
   const handleGoogleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!googleEmail.trim()) return;
-    loginWithGoogle(googleEmail);
+    loginWithGoogle(googleEmail, googleName);
   };
 
   const handleSignupSubmit = (e: React.FormEvent) => {
@@ -129,7 +131,19 @@ export const LoginPage: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">
-                    Mobile Phone Number
+                    Your Full Name <span className="text-rose-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. 'Vaishali', 'Rahul Sharma', 'Ananya'"
+                    value={phoneName}
+                    onChange={(e) => setPhoneName(e.target.value)}
+                    className="w-full bg-[#090D0A] text-white text-sm rounded-2xl px-4 py-3.5 border border-gray-800 focus:border-[#8CE600] focus:outline-none mb-4"
+                  />
+
+                  <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">
+                    Mobile Phone Number <span className="text-rose-500">*</span>
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-bold text-[#8CE600]">
@@ -211,7 +225,19 @@ export const LoginPage: React.FC = () => {
             <form onSubmit={handleGoogleSubmit} className="space-y-5">
               <div>
                 <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">
-                  Gmail Email Address
+                  Your Full Name <span className="text-rose-500">*</span>
+                </label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. 'Vaishali', 'Rahul Sharma', 'Ananya'"
+                  value={googleName}
+                  onChange={(e) => setGoogleName(e.target.value)}
+                  className="w-full bg-[#090D0A] text-white text-sm rounded-2xl px-4 py-3.5 border border-gray-800 focus:border-[#8CE600] focus:outline-none mb-4"
+                />
+
+                <label className="block text-xs font-bold text-gray-300 uppercase tracking-wider mb-2">
+                  Gmail Email Address <span className="text-rose-500">*</span>
                 </label>
                 <div className="relative">
                   <Mail className="w-4 h-4 text-gray-400 absolute left-4 top-1/2 -translate-y-1/2" />
