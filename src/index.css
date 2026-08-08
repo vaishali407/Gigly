@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@600;700;800;900&display=swap');
+@import "tailwindcss";
+
+:root {
+  --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
+  
+  --color-brand-primary: #8CE600;
+  --color-brand-hover: #78C800;
+  --color-brand-accent: #00FF66;
+  --color-bg-dark: #090D0A;
+  --color-card-dark: #121814;
+  --color-card-border: #1E2820;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: #090D0A;
+  color: #E5E7EB;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+/* Custom Neon Glow Utilities */
+.neon-glow {
+  box-shadow: 0 0 25px rgba(140, 230, 0, 0.4);
+}
+
+.neon-glow-sm {
+  box-shadow: 0 0 12px rgba(140, 230, 0, 0.25);
+}
+
+.neon-border {
+  border-color: rgba(140, 230, 0, 0.4);
+}
+
+.neon-text-glow {
+  text-shadow: 0 0 15px rgba(140, 230, 0, 0.6);
+}
+
+/* Logo Bubble Font Look */
+.gigly-logo-text {
+  font-family: var(--font-display);
+  font-weight: 900;
+  color: #8CE600;
+  text-shadow: 0 0 12px rgba(140, 230, 0, 0.5), -2px -2px 0 #000, 2px 2px 0 #000, 0 4px 0 #000;
+  letter-spacing: -0.03em;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #090D0A;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E2820;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8CE600;
+}
+
+/* Custom Glassmorphism */
+.glass-card {
+  background: rgba(18, 24, 20, 0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.glass-nav {
+  background: rgba(9, 13, 10, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(140, 230, 0, 0.15);
+}
+
+/* Pulse animation for urgent badges */
+@keyframes neonPulse {
+  0%, 100% {
+    opacity: 1;
+    box-shadow: 0 0 10px rgba(140, 230, 0, 0.5);
+  }
+  50% {
+    opacity: 0.85;
+    box-shadow: 0 0 20px rgba(0, 255, 102, 0.7);
+  }
+}
+
+.animate-neon-pulse {
+  animation: neonPulse 2s infinite ease-in-out;
+}
